@@ -1,0 +1,30 @@
+# Node modules
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Build output
+dist/
+build/
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+
+# Env files
+.env
+
+# Uploaded files (optional — add this if you store animal photos locally)
+uploads/
+
+# System files
+.DS_Store
+Thumbs.db
