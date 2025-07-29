@@ -1,0 +1,68 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url = env("DATABASE_URL")
+}
+
+model User {
+    userId              String                  @id @default(uuid())
+    fullName            String                  @db.VarChar(100)
+    email               String?                 @db.VarChar(254)
+    type                UserType? 
+    phoneNumber         String                  @db.VarChar(20)
+    location            String                  @db.VarChar(255) 
+    createdAt           DateTime                @default(now())
+    updatedAt           DateTime                @updatedAt
+    reportedRequests    RescueRequest[]         @relation("Reporter")
+    rescuedRequests     RescueRequest[]         @relation("Rescuer")
+}
+
+model RescueRequest {
+    rescueRequestId     String                   @id @default(uuid())
+    reporter            User                     @relation("Reporter", fields: [reporterId], references: [userId])
+    reporterId          String
+    rescuer             User?                    @relation("Rescuer", fields: [rescuerId], references: [userId])
+    rescuerId           String?
+    status              RescueRequestStatus
+    description         String?                  @db.Text  
+    animalType          AnimalType
+    pickupAddress       String                   @db.VarChar(255) 
+    createdAt           DateTime                 @default(now())
+    updatedAt           DateTime                 @updatedAt
+    photos              RescueRequestPhoto[]     @relation("RescueRequest")
+}
+
+model RescueRequestPhoto {
+    rescueRequestPhotoId     String             @id @default(uuid())
+    rescueRequest            RescueRequest      @relation("RescueRequest", fields: [rescueRequestId], references: [rescueRequestId])
+    rescueRequestId          String
+    photoUrl                 String             @db.VarChar(2083) 
+    createdAt                DateTime           @default(now())
+    updatedAt                DateTime           @updatedAt
+}
+
+enum UserType {
+  REPORTER @map("reporter")
+  RESCUER  @map("rescuer")
+  BOTH     @map("both")
+}
+
+enum RescueRequestStatus {
+  OPENED            @map("opened")
+  RESCUER_ASSIGNED  @map("rescuer_assigned")
+  ON_THE_WAY        @map("on_the_way")
+  ANIMAL_COLLECTED  @map("animal_collected")
+  ANIMAL_ARRIVED    @map("animal_arrived")
+  CANCELLED         @map("cancelled")
+}
+
+enum AnimalType {
+  SONG_BIRD     @map("song_bird")
+  BIRD_OF_PREY  @map("bird_of_prey")
+  WATER_BIRD    @map("water_bird")
+  HEDGEHOG      @map("hedgehog")
+  OTHER         @map("other")
+}
