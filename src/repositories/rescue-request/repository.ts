@@ -1,10 +1,11 @@
 import prisma from "../../db/db";
+import { RescueRequestWithRelations } from "../../types/prisma/rescue-request.types";
 import { IRescueRequestRepository } from "./repository.interface";
 
 export class RescueRequestRepository implements IRescueRequestRepository
 {
 
-    async getRescueRequestById(rescueRequestId: string) {
+    async getRescueRequestById(rescueRequestId: string): Promise<RescueRequestWithRelations | null> {
         return await prisma.rescueRequest.findUnique({
             where: {
                 rescueRequestId: rescueRequestId,
@@ -19,16 +20,17 @@ export class RescueRequestRepository implements IRescueRequestRepository
                     select: {
                         fullName: true,
                         phoneNumber: true,
+                        email: true,
                     },
                 },
                 rescuer: {
                     select: {
                         fullName: true,
                         phoneNumber: true,
+                        email: true,
                     },
                 },
             }
         })
     }
-
 }
