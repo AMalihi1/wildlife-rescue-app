@@ -8,7 +8,7 @@ export class RescueRequestController {
     async getRescueRequestById(req: Request, res: Response) {
         try
         {
-            const rescueRequestId = req.params.rescueRequestId;
+            const rescueRequestId = req.params.id;
             const rescueRequestResponse = await this.rescueRequestService.getRescueRequestById(rescueRequestId);
 
             if (!rescueRequestResponse) {
