@@ -31,3 +31,9 @@ Thumbs.db
 
 #prisma migrations
 prisma/migrations/
+
+# Ignore all .vscode files
+.vscode/
+
+# but keep tasks.json
+!.vscode/tasks.json
