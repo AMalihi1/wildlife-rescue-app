@@ -33,12 +33,12 @@ const logger = pino({
         ignore: 'pid,hostname', // Remove PID and hostname noise
         messageFormat: '{msg}', // Clean message format
         levelFirst: true,  // Show level first
-        singleLine: true // Keep it compact
+        singleLine: true, // Keep it compact
       }
-    },
-    level: 'info'
+    }
   }),
 
+  
   // Production configuration
   ...(isProduction && {
     formatters: {
@@ -48,7 +48,7 @@ const logger = pino({
     },
     timestamp: pino.stdTimeFunctions.isoTime
   })
-  
+
 });
 
 export default logger;
