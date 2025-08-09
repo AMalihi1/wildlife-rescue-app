@@ -1,6 +1,6 @@
 import { IRescueRequestService } from "../../services/rescue-request/service.interface";
 import { Request, Response } from "express";
-
+import logger from "../../lib/logger";
 
 export class RescueRequestController {
     constructor(private readonly rescueRequestService: IRescueRequestService) {}
@@ -8,6 +8,7 @@ export class RescueRequestController {
     async getRescueRequestById(req: Request, res: Response) {
         try
         {
+            logger.info({ method: req.method, url: req.url }, 'get rescue request received with id: ' + req.params.id);
             const rescueRequestId = req.params.id;
             const rescueRequestResponse = await this.rescueRequestService.getRescueRequestById(rescueRequestId);
 
