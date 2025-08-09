@@ -47,13 +47,8 @@ const logger = pino({
       }
     },
     timestamp: pino.stdTimeFunctions.isoTime
-  }),
-
-  // Base configuration for all environments
-  base: {
-    pid: false,
-    hostname: false
-  }
+  })
+  
 });
 
 export default logger;
