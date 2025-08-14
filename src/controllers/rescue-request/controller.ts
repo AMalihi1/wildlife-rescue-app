@@ -8,7 +8,7 @@ export class RescueRequestController {
     async getRescueRequestById(req: Request, res: Response) {
         const rescueRequestId = req.params.id;
         try {
-            logger.info({ method: req.method, url: req.url, rescueRequestId }, "rescue request received");
+            logger.info({ method: req.method, url: req.url, rescueRequestId }, "get rescue request received");
 
             const rescueRequestResponse = await this.rescueRequestService.getRescueRequestById(rescueRequestId);
 
@@ -20,6 +20,18 @@ export class RescueRequestController {
             return res.status(200).json(rescueRequestResponse);
         } catch (error) {
             logger.error({ rescueRequestId, err: error }, "failed to handle getRescueRequestById");
+            return res.status(500).json({ message: "Internal Server Error" });
+        }
+    }
+
+    async createRescueRequest(req: Request, res: Response) {
+        const rescueRequest = req.body;
+        try {
+            logger.info({ method: req.method, url: req.url, rescueRequest }, "new rescue request call received");
+            const rescueRequestResponse = await this.rescueRequestService.createRescueRequest(rescueRequest);
+            return res.status(201).json(rescueRequestResponse);
+        } catch (error) {
+            logger.error({ rescueRequest, err: error }, "failed to handle createRescueRequest");
             return res.status(500).json({ message: "Internal Server Error" });
         }
     }
