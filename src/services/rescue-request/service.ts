@@ -6,6 +6,7 @@ import { mapCreateDtoToRescueRequest, mapRescueRequestToDto } from "./mapper";
 import logger from "../../lib/logger";
 import { CreateRescueRequestDto } from "../../types/dto/rescue-request/create.request.dto";
 import { UserRepository } from "../../repositories/user/repository";
+import { NotFoundError } from "../../lib/errors";
 
 export class RescueRequestService implements IRescueRequestService {
     constructor(private readonly rescueRequestRepository: RescueRequestRepository, private readonly userRepository : UserRepository) {}
@@ -37,8 +38,8 @@ export class RescueRequestService implements IRescueRequestService {
             const reporter = await this.userRepository.getUserbyId(createRescueRequest.reporterId);
             if (!reporter)
             {
-                //todo add exception
                 logger.warn( { reporterId: createRescueRequest.reporterId }, "reporter does not exist.");
+                throw new NotFoundError(`Reporter with Id ${createRescueRequest.reporterId} not found`);
             } 
             const mappedCreateRescueRequest = mapCreateDtoToRescueRequest(createRescueRequest);
             const photoUrls = createRescueRequest.photos.map(p => p.photoUrl);
@@ -51,5 +52,4 @@ export class RescueRequestService implements IRescueRequestService {
             throw error;
         }
     }
-
 }

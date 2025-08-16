@@ -1,6 +1,7 @@
 import { IRescueRequestService } from "../../services/rescue-request/service.interface";
 import { Request, Response } from "express";
 import logger from "../../lib/logger";
+import { NotFoundError } from "../../lib/errors";
 
 export class RescueRequestController {
     constructor(private readonly rescueRequestService: IRescueRequestService) {}
@@ -25,13 +26,19 @@ export class RescueRequestController {
     }
 
     async createRescueRequest(req: Request, res: Response) {
-        const rescueRequest = req.body;
         try {
-            logger.info({ method: req.method, url: req.url, rescueRequest }, "new rescue request call received");
-            const rescueRequestResponse = await this.rescueRequestService.createRescueRequest(rescueRequest);
-            return res.status(201).json(rescueRequestResponse);
+            const createRescueRequest = req.body;
+            logger.info({ method: req.method, url: req.url, createRescueRequest }, "new rescue request call received");
+            
+            const result = await this.rescueRequestService.createRescueRequest(createRescueRequest);
+            return res.status(201).json(result);
         } catch (error) {
-            logger.error({ rescueRequest, err: error }, "failed to handle createRescueRequest");
+            
+            logger.error({ method: req.method, url: req.url, err: error }, "controller: create rescue request failed");
+            
+            if (error instanceof NotFoundError) {
+                return res.status(404).json({ message: error.message });
+            }
             return res.status(500).json({ message: "Internal Server Error" });
         }
     }
