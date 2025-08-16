@@ -39,6 +39,6 @@ export function mapRescueRequestToDto(rescueRequestWithRelations: RescueRequestW
       pickupAddress: createRescueRequestDto.pickupAddress,
       description: createRescueRequestDto.description,
       status: RescueRequestStatusPrisma.OPENED,
-      animalType: createRescueRequestDto.animalType as unknown as AnimalTypePrisma
+      animalType: createRescueRequestDto.animalType.toUpperCase() as AnimalTypePrisma
     };
   }
