@@ -2,6 +2,7 @@ import { IRescueRequestService } from "../../services/rescue-request/service.int
 import { Request, Response } from "express";
 import logger from "../../lib/logger";
 import { NotFoundError } from "../../lib/errors";
+import { createRescueRequestSchema } from "../../types/zod/create-rescue-request.schema";
 
 export class RescueRequestController {
     constructor(private readonly rescueRequestService: IRescueRequestService) {}
@@ -27,10 +28,19 @@ export class RescueRequestController {
 
     async createRescueRequest(req: Request, res: Response) {
         try {
-            const createRescueRequest = req.body;
-            logger.info({ method: req.method, url: req.url, createRescueRequest }, "new rescue request call received");
+    
+            logger.info({ method: req.method, url: req.url, body:req.body }, "new rescue request call received");
             
-            const result = await this.rescueRequestService.createRescueRequest(createRescueRequest);
+            const validationResult = createRescueRequestSchema.safeParse(req.body)
+
+            if (!validationResult.success)
+            {
+                const errors = validationResult.error.issues.map( issue => issue.message);
+                logger.warn({ body: req.body, errors }, "Validation failed");
+                return res.status(400).json({ message: "Validation failed", errors });
+            }
+
+            const result = await this.rescueRequestService.createRescueRequest(req.body);
             return res.status(201).json(result);
         } catch (error) {
             

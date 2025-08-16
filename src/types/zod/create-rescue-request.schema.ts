@@ -17,7 +17,5 @@ export const createRescueRequestSchema = z.object({
       .min(5, "pickupAddress must be at least 5 characters")
       .max(255, "pickupAddress must be at most 255 characters"),
   
-    photos: z.array(
-    z.string().url({ message: "photoUrl must be a valid URL" })
-    ).optional(),
+    photos: z.array(z.object({ photoUrl: z.string().url({ message: "photoUrl must be a valid URL" }) }))
   });
