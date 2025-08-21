@@ -20,3 +20,8 @@ export enum AnimalType {
   HEDGEHOG = 'hedgehog',
   OTHER = 'other'                   
 }
+
+export enum EventType {
+  RescueRequestCreated = "rescue-request.created",
+  RescueRequestAssigned = "rescue-request.assigned",
+}

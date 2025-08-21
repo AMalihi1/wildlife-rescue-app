@@ -7,6 +7,9 @@ import logger from "../../lib/logger";
 import { CreateRescueRequestDto } from "../../types/dto/rescue-request/create.request.dto";
 import { UserRepository } from "../../repositories/user/repository";
 import { NotFoundError } from "../../lib/errors";
+import { EventPublisher } from "../../lib/event-publisher";
+import { EventType } from "../../types/enums";
+import { RescueRequest } from "@prisma/client";
 
 export class RescueRequestService implements IRescueRequestService {
     constructor(private readonly rescueRequestRepository: RescueRequestRepository, private readonly userRepository : UserRepository) {}
@@ -44,6 +47,10 @@ export class RescueRequestService implements IRescueRequestService {
             const mappedCreateRescueRequest = mapCreateDtoToRescueRequest(createRescueRequest);
             const photoUrls = createRescueRequest.photos.map(p => p.photoUrl);
             const createdRescueRequest = await this.rescueRequestRepository.createRescueRequestWithPhotos(mappedCreateRescueRequest, photoUrls); 
+            
+            //publish created rescue request event
+            await this.publishRescueRequestCreatedEvent(createdRescueRequest);
+
             return { rescueRequestId: createdRescueRequest.rescueRequestId };
         }
         catch (error)
@@ -51,5 +58,20 @@ export class RescueRequestService implements IRescueRequestService {
             logger.error({ createRescueRequest, err: error }, "service: create rescue request failed");
             throw error;
         }
+    }
+
+    private async publishRescueRequestCreatedEvent(createdRescueRequest: RescueRequest) : Promise<void>
+    {
+        const payload = {
+            rescueRequestId: createdRescueRequest.rescueRequestId,
+            reporterId: createdRescueRequest.reporterId,
+            status: createdRescueRequest.status,
+            animalType: createdRescueRequest.animalType,
+            description: createdRescueRequest.description,
+            pickupAddress: createdRescueRequest.pickupAddress,
+            createdAt: createdRescueRequest.createdAt,
+        }
+        const eventPublisher = new EventPublisher();
+        await eventPublisher.publish(EventType.RescueRequestCreated, payload);
     }
 }
