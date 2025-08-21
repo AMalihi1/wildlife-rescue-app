@@ -26,7 +26,7 @@ model RescueRequest {
     reporterId          String
     rescuer             User?                    @relation("Rescuer", fields: [rescuerId], references: [userId])
     rescuerId           String?
-    status              RescueRequestStatus
+    status              RescueRequestStatus      @default(OPENED)
     description         String?                  @db.Text  
     animalType          AnimalType
     pickupAddress       String                   @db.VarChar(255) 

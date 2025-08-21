@@ -1,7 +1,9 @@
 import { RescueRequestResponseDto } from "../../types/dto/rescue-request/response.dto";
 import { RescueRequestStatus, AnimalType } from "../../types/enums";    
 import { RescueRequestWithRelations } from "../../types/prisma/rescue-request.types";
-
+import { CreateRescueRequestDto } from "../../types/dto/rescue-request/create.request.dto";
+import { Prisma } from "@prisma/client";
+import { AnimalType as AnimalTypePrisma,  RescueRequestStatus as RescueRequestStatusPrisma} from "@prisma/client";
 
 export function mapRescueRequestToDto(rescueRequestWithRelations: RescueRequestWithRelations): RescueRequestResponseDto {
     return {
@@ -27,5 +29,16 @@ export function mapRescueRequestToDto(rescueRequestWithRelations: RescueRequestW
           email: rescueRequestWithRelations.rescuer.email,
         }
       : null
+    };
+  }
+
+  export function mapCreateDtoToRescueRequest( createRescueRequestDto : CreateRescueRequestDto) : Prisma.RescueRequestUncheckedCreateInput 
+  {
+    return { 
+      reporterId: createRescueRequestDto.reporterId,
+      pickupAddress: createRescueRequestDto.pickupAddress,
+      description: createRescueRequestDto.description,
+      status: RescueRequestStatusPrisma.OPENED,
+      animalType: createRescueRequestDto.animalType.toUpperCase() as AnimalTypePrisma
     };
   }
